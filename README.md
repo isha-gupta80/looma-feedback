@@ -1,1 +1,1 @@
-# looma-feedback
+# LOOMA_QR_CODE_LABELS

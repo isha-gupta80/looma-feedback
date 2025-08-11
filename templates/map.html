@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Looma Device Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Leaflet CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+  <style>
+    #map {
+      height: 90vh;
+      width: 100%;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <h2 style="text-align: center;">Looma Device Locations</h2>
+  <div id="map"></div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <script>
+    // Device data passed from backend
+    const devices = JSON.parse('{{ devices | tojson | safe }}');
+
+    // Initialize the map centered on Nepal
+    const map = L.map('map').setView([28.3949, 84.1240], 7);
+
+    // Add OpenStreetMap tile layer
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18
+    }).addTo(map);
+
+    // Add markers for each device
+    devices.forEach(device => {
+      L.marker([device.latitude, device.longitude])
+        .addTo(map)
+        .bindPopup(`
+          <b>${device.school}</b><br>
+          Serial: ${device.serial}<br>
+          Model: ${device.model}
+        `);
+    });
+  </script>
+</body>
+</html>

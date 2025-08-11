@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Looma Login</title>
+    <style>
+        /* Reset and base */
+        * {
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(to right, #1d3557, #457b9d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1d3557;
+        }
+        .login-container {
+            background-color: #ffffff;
+            padding: 40px 30px;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            width: 360px;
+            text-align: center;
+        }
+        h2 {
+            margin-bottom: 20px;
+            font-weight: 700;
+            font-size: 1.8rem;
+        }
+        label {
+            display: block;
+            text-align: left;
+            margin-top: 15px;
+            font-weight: 600;
+            color: #333333;
+        }
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 12px 14px;
+            margin-top: 6px;
+            border: 1.8px solid #cccccc;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.3s ease;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #1d3557;
+            box-shadow: 0 0 8px rgba(29, 53, 87, 0.5);
+        }
+        button {
+            margin-top: 25px;
+            width: 100%;
+            padding: 14px;
+            background-color: #1d3557;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 17px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0b2545;
+        }
+        .flash-message {
+            margin-top: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: left;
+            border-radius: 6px;
+            padding: 8px 12px;
+        }
+        .flash-error {
+            color: #d93025;
+            background-color: #fce8e6;
+            border: 1px solid #d93025;
+        }
+        .flash-success {
+            color: #0f9d58;
+            background-color: #e6f4ea;
+            border: 1px solid #0f9d58;
+        }
+        .flash-warning {
+            color: #f9ab00;
+            background-color: #fff7e1;
+            border: 1px solid #f9ab00;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Looma Login</h2>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <p class="flash-message flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" novalidate>
+            <label for="username">Username:</label>
+            <input 
+                type="text" 
+                id="username" 
+                name="username" 
+                required 
+                autocomplete="username" 
+                autofocus 
+                aria-describedby="usernameHelp"
+                pattern="^[A-Za-z0-9_]{3,20}$"
+                title="Username should be 3-20 characters: letters, numbers, or underscore." 
+            >
+            
+            <label for="password">Password:</label>
+            <input 
+                type="password" 
+                id="password" 
+                name="password" 
+                required 
+                autocomplete="current-password"
+                aria-describedby="passwordHelp"
+                minlength="6"
+                title="Password must be at least 6 characters."
+            >
+            
+            <button type="submit">Login</button>
+        </form>
+    </div>
+</body>
+</html>

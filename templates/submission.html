@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Submitted Devices</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f7f9fc;
+            color: #333;
+        }
+        h2 {
+            color: #1d3557;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            background: #fff;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        th, td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #457b9d;
+            color: white;
+            font-weight: 600;
+        }
+        tr:hover {
+            background-color: #e1ecf4;
+        }
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            thead tr {
+                position: absolute;
+                top: -9999px;
+                left: -9999px;
+            }
+            tr {
+                margin-bottom: 20px;
+                border: 1px solid #ccc;
+                border-radius: 8px;
+                padding: 10px;
+                background: #fff;
+            }
+            td {
+                border: none;
+                position: relative;
+                padding-left: 50%;
+            }
+            td:before {
+                content: attr(data-label);
+                position: absolute;
+                left: 15px;
+                top: 12px;
+                font-weight: 600;
+                color: #457b9d;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h2>Submitted Device Info</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>School</th>
+                <th>Technician</th>
+                <th>Software Version</th>
+                <th>Condition</th>
+                <th>Serial</th>
+                <!--Changed-->
+                <th>Latitude</th>
+                <th>Longitude</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in submissions %}
+            <tr>
+                <td data-label="ID">{{ item.id }}</td>
+                <td data-label="School">{{ item.school }}</td>
+                <td data-label="Technician">{{ item.technician }}</td>
+                <td data-label="Software Version">{{ item.software_version }}</td>
+                <td data-label="Condition">{{ item.condition }}</td>
+                <td data-label="Serial">{{ item.serial }}</td>
+                <td data-label="Latitude">{{ item.latitude }}</td>
+                <td data-label="Longitude">{{ item.longitude }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

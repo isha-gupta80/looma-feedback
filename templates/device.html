@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Device Records: {{ serial }}</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f6fb;
+            color: #333;
+            font-size: 17px;
+        }
+
+        header {
+            background-color: #2d89ef;
+            padding: 1.5rem 3rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        header .nav-links a {
+            color: white;
+            margin-left: 1.5rem;
+            text-decoration: none;
+            font-weight: bold;
+            transition: opacity 0.3s;
+        }
+
+        header .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .container h2 {
+            color: #2d89ef;
+            margin-bottom: 1rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.9rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        thead {
+            background-color: #2d89ef;
+            color: white;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #f0f4f8;
+        }
+
+        tbody tr:hover {
+            background-color: #e6effc;
+        }
+
+        .no-records {
+            background-color: #fff3cd;
+            border: 1px solid #ffeeba;
+            padding: 1rem;
+            border-radius: 5px;
+            color: #856404;
+            margin-top: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            table {
+                font-size: 14px;
+            }
+
+            th, td {
+                padding: 0.6rem 0.5rem;
+            }
+
+            header, .container {
+                padding: 1rem;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Records: {{ serial }}</h1>
+        <div class="nav-links">
+            <a href="{{ url_for('dashboard') }}">Back to Dashboard</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h2>Scan History</h2>
+
+        {% if records %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Build Date</th> <!-- New -->
+                        <th>Manufacturing Location</th> <!-- New -->
+                        <th>Lot Number</th> <!-- New -->
+
+
+                        <th>Username</th>
+                        <th>School</th>
+                        <th>Software Version</th>
+                        <th>Condition</th>
+                        <th>Latitude</th>
+                        <th>Longitude</th>
+                        <th>Location</th> <!-- Added this -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for record in records %}
+                    <tr>
+                        <td>{{ record.timestamp }}</td>
+                        <td>{{ record.build_date }}</td> <!-- New -->
+                        <td>{{ record.mfg_location }}</td> <!-- New -->
+                        <td>{{ record.lot_number }}</td> <!-- New -->
+
+
+                        <td>{{ record.username }}</td>
+                        <td>{{ record.school }}</td>
+                        <td>{{ record.software_version }}</td>
+                        <td>{{ record.condition }}</td>
+                        <td>  {%if record.gps_location and record.gps_location.latitude %}
+                            {{ record.gps_location.latitude}}
+                            {% else %}
+                              Unknown
+                            {% endif %} 
+                        </td>
+                        <td>  {%if record.gps_location and record.gps_location.longitude %}
+                            {{ record.gps_location.longitude}}
+                            {% else %}
+                              Unknown
+                            {% endif %}
+  
+                        </td>
+                        <td> {{ record.gps_address or 'Unknown' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <div class="no-records">
+                No records found for this device.
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
+

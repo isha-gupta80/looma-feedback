@@ -1,0 +1,106 @@
+/* General Layout */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to right, #0f2027, #203a43, #2c5364); /* dark blue gradient */
+    color: #f0f4f8;
+}
+
+/* Centered Container */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    min-height: 100vh;
+    box-sizing: border-box;
+}
+
+/* Header Text */
+.header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.header h2 {
+    color: #00b4db; /* Light blue */
+    margin: 0;
+    font-size: 2rem;
+}
+
+.header p {
+    margin: 0.3rem 0;
+    font-size: 1rem;
+    color: #d1e8ff;
+}
+
+/* Form Styling */
+form {
+    background: rgba(255, 255, 255, 0.1); /* translucent for glass effect */
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+/* Labels */
+label {
+    display: block;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    color: #e0f7ff;
+}
+
+/* Input Fields */
+input[type="text"],
+input[type="hidden"] {
+    width: 100%;
+    padding: 0.65rem;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    box-sizing: border-box;
+    margin-top: 0.3rem;
+    background-color: #e0f7ff;
+    color: #00334e;
+    transition: box-shadow 0.2s;
+}
+
+input[type="text"]:focus {
+    outline: none;
+    box-shadow: 0 0 5px #00b4db;
+}
+
+/* Submit Button */
+button {
+    background-color: #007acc;
+    color: white;
+    border: none;
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 1rem;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+button:hover {
+    background-color: #005fa3;
+    transform: translateY(-2px);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 600px) {
+    .container {
+        padding: 1rem;
+    }
+    form {
+        padding: 1.2rem;
+    }
+}

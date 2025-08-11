@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Looma Device Scan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>Looma Device Scan Form</h2>
+            {% if serial %}<p><strong>Device Serial:</strong> {{ serial }}</p>{% endif %}
+        </div>
+
+        <form id="deviceForm" action="/" method="POST">
+            <!-- Hidden fields populated from QR code -->
+            <input type="hidden" name="serial" value="{{ serial }}">
+            <input type="hidden" name="build_date" value="{{ build_date }}">
+            <input type="hidden" name="mfg_location" value="{{ mfg_location }}">
+            <input type="hidden" name="lot_number" value="{{ lot_number }}">
+
+            <!-- Geolocation -->
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <!-- User-entered fields -->
+            <label>School Name:
+                <input type="text" name="school" pattern="[A-Za-z\s]+" title="Only letters and spaces allowed" required>
+            </label>
+
+            <label>Technician Name:
+                <input type="text" name="technician" pattern="[A-Za-z\s]+" title="Only letters and spaces allowed" required>
+            </label>
+
+            <label>Software Version:
+                <input type="text" name="software_version" required>
+            </label>
+
+            <label>Condition:
+                <input type="text" name="condition" required>
+            </label>
+
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

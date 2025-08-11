@@ -1,0 +1,5 @@
+
+http://localhost:5000/ --->form for user of technician
+http://localhost:5000/login --->login page for admin to see details of scanned looma devices
+username-amit
+passwaaord--password

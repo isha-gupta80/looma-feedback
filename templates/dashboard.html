@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looma Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e2a47; /* Dark Blue Background */
+            color: #e0e0e0; /* Light Text Color */
+            font-size: 17px;
+        }
+
+        header {
+            background-color: #1c3b6e; /* Darker Blue */
+            padding: 1.5rem 3rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid #3a6f9d; /* Light Blue Border */
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.3rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: opacity 0.3s;
+        }
+
+        header a:hover {
+            opacity: 0.8;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h2 {
+            margin-bottom: 1.5rem;
+            color: #70a9d3; /* Light Blue */
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .device-card {
+            background-color: #2f456f; /* Darker Blue Card */
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #38587c; /* Slightly Lighter Border */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s ease, background-color 0.3s;
+        }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.2);
+            background-color: #3f5c8a; /* Lighter Blue on Hover */
+        }
+
+        .device-card a {
+            text-decoration: none;
+            color: #70a9d3; /* Light Blue Text */
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: block;
+            text-align: center;
+            padding: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .device-card a:hover {
+            color: #4a82a7; /* Darker Light Blue on Hover */
+        }
+
+        .map-link {
+            display: inline-block;
+            margin-top: 1.5rem;
+            padding: 1rem 2rem;
+            background-color: #70a9d3; /* Light Blue */
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1rem;
+            text-align: center;
+            transition: background-color 0.3s ease;
+        }
+
+        .map-link:hover {
+            background-color: #4a82a7; /* Darker Light Blue on Hover */
+        }
+
+        @media (max-width: 768px) {
+            header, .container {
+                padding: 1rem;
+            }
+
+            .device-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Looma Dashboard</h1>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </header>
+
+    <div class="container">
+        <div class="section">
+            <h2>Scanned Looma Devices</h2>
+            <div class="device-grid">
+                {% for serial in serials %}
+                    <div class="device-card">
+                        <a href="{{ url_for('device', serial=serial) }}">{{ serial }}</a>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>View on Map</h2>
+            <a class="map-link" href="{{ url_for('map_view') }}">View Looma Device Locations</a>
+        </div>
+    </div>
+
+</body>
+</html>
