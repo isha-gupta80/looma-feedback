@@ -9,9 +9,27 @@ function requestLocationPermission() {
     const locationStatus = document.getElementById("locationStatus");
     const locationText = document.getElementById("locationText");
 
+    // Check if we're on HTTPS or localhost (required for geolocation on mobile)
+    const isSecure = location.protocol === 'https:' || location.hostname === 'localhost';
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
     if ("geolocation" in navigator) {
-        locationText.textContent = "Requesting location permission...";
+        // Show different messages for mobile vs desktop
+        if (isMobile && !isSecure) {
+            locationText.textContent = "⚠ Location requires secure connection (HTTPS) on mobile devices";
+            locationStatus.className = "location-status location-denied";
+            return;
+        }
+
+        locationText.textContent = isMobile ? 
+            "Tap 'Allow' when prompted for location access..." : 
+            "Requesting location permission...";
         locationStatus.className = "location-status location-pending";
+
+        // Add user interaction prompt for mobile
+        if (isMobile) {
+            locationText.innerHTML = locationText.textContent + "<br><small>You may need to tap 'Allow' in your browser's permission dialog</small>";
+        }
 
         navigator.geolocation.getCurrentPosition(
             function (position) {
@@ -23,20 +41,38 @@ function requestLocationPermission() {
                 locationStatus.className = "location-status location-granted";
             },
             function (error) {
-                const errorMessages = {
-                    [error.PERMISSION_DENIED]: "Location permission denied by user",
-                    [error.POSITION_UNAVAILABLE]: "Location information unavailable", 
-                    [error.TIMEOUT]: "Location request timed out"
-                };
+                let errorMessage;
+                let helpText = "";
+
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "Location permission denied";
+                        if (isMobile) {
+                            helpText = "<br><small>Try: Settings → Site Settings → Location → Allow</small>";
+                        }
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Location information unavailable";
+                        helpText = "<br><small>Check if location services are enabled on your device</small>";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "Location request timed out";
+                        helpText = "<br><small>Please try again or check your GPS signal</small>";
+                        break;
+                    default:
+                        errorMessage = "Location access failed";
+                        if (isMobile && !isSecure) {
+                            helpText = "<br><small>Mobile devices require HTTPS for location access</small>";
+                        }
+                }
                 
-                const errorMessage = errorMessages[error.code] || "Location access denied";
-                locationText.textContent = "⚠ " + errorMessage;
+                locationText.innerHTML = "⚠ " + errorMessage + helpText;
                 locationStatus.className = "location-status location-denied";
-                console.warn("Location error:", errorMessage);
+                console.warn("Location error:", error);
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
+                timeout: 15000, // Increased timeout for mobile
                 maximumAge: 300000
             }
         );
