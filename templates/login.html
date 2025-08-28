@@ -1,0 +1,265 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looma Admin Login</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #001540, #003875, #0056b3);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #001540;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000"><polygon fill="%23ffffff05" points="0,1000 1000,0 1000,1000"/></svg>');
+            pointer-events: none;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 3rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .logo {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 1.5rem;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+        }
+        
+        h2 {
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+            font-size: 2rem;
+            color: #001540;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+            text-align: left;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #001540;
+            font-size: 0.95rem;
+        }
+        
+        input[type="text"],
+        input[type="password"] {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        input[type="text"]:focus,
+        input[type="password"]:focus {
+            outline: none;
+            border-color: #001540;
+            box-shadow: 0 0 0 3px rgba(0, 21, 64, 0.1);
+            background: white;
+        }
+        
+        button {
+            margin-top: 1rem;
+            width: 100%;
+            padding: 1.2rem;
+            background: linear-gradient(135deg, #001540, #002a5c);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 21, 64, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .flash-message {
+            margin-top: 1.5rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-align: center;
+            border-radius: 10px;
+            padding: 1rem;
+            animation: slideIn 0.3s ease;
+        }
+        
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .flash-error {
+            color: #d32f2f;
+            background: linear-gradient(135deg, #ffebee, #ffcdd2);
+            border: 1px solid #ef5350;
+        }
+        
+        .flash-success {
+            color: #2e7d32;
+            background: linear-gradient(135deg, #e8f5e8, #c8e6c9);
+            border: 1px solid #66bb6a;
+        }
+        
+        .flash-warning {
+            color: #f57c00;
+            background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+            border: 1px solid #ffb74d;
+        }
+        
+        .features {
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid #e0e0e0;
+        }
+        
+        .feature-list {
+            text-align: left;
+            color: #666;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+        
+        .feature-list h4 {
+            margin: 0 0 0.8rem 0;
+            color: #001540;
+            font-size: 1rem;
+        }
+        
+        .feature-list ul {
+            margin: 0;
+            padding-left: 1.2rem;
+        }
+        
+        .feature-list li {
+            margin-bottom: 0.4rem;
+        }
+
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 2rem 1.5rem;
+                margin: 10px;
+            }
+            
+            h2 {
+                font-size: 1.6rem;
+            }
+            
+            .logo {
+                width: 80px;
+                height: 80px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <img src="{{ url_for('static', filename='Looma-2019.png') }}" alt="Looma Logo" class="logo">
+        <h2>Admin Dashboard</h2>
+        <p class="subtitle">Monitor and manage device scans</p>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash-message flash-{{ category }}">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <form method="POST" novalidate>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input 
+                    type="text" 
+                    id="username" 
+                    name="username" 
+                    required 
+                    autocomplete="username" 
+                    autofocus 
+                    placeholder="Enter your username"
+                />
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    name="password" 
+                    required 
+                    autocomplete="current-password"
+                    placeholder="Enter your password"
+                />
+            </div>
+            
+            <button type="submit">Access Dashboard</button>
+        </form>
+
+        <div class="features">
+            <div class="feature-list">
+                <h4>Dashboard Features:</h4>
+                <ul>
+                    <li>View all scanned devices</li>
+                    <li>Monitor scan statistics</li>
+                    <li>Track device locations</li>
+                    <li>Export scan data</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

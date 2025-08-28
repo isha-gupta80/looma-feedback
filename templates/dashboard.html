@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looma Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #001540;
+            color: #e0e0e0;
+            font-size: 17px;
+            min-height: 100vh;
+        }
+
+        header {
+            background-color: #002a5c;
+            padding: 1.5rem 3rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+            border-bottom: 3px solid #003875;
+            flex-wrap: wrap;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .header-logo {
+            width: 50px;
+            height: 50px;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.3rem;
+            letter-spacing: 1px;
+            font-weight: 600;
+        }
+
+        header a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: opacity 0.3s;
+            padding: 0.5rem 1rem;
+            border: 1px solid transparent;
+            border-radius: 5px;
+        }
+
+        header a:hover {
+            background-color: #003875;
+            border-color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #003875, #0056b3);
+            padding: 1.2rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .stat-number {
+            font-size: 2.2rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label {
+            font-size: 0.95rem;
+            color: #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .section {
+            margin-bottom: 3rem;
+        }
+
+        .section h2 {
+            margin-bottom: 1.5rem;
+            color: #ffffff;
+            font-size: 1.8rem;
+            font-weight: 500;
+        }
+
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .device-card {
+            background-color: #003875;
+            padding: 1.5rem;
+            border-radius: 12px;
+            border: 1px solid #0056b3;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, box-shadow 0.3s ease, background-color 0.3s;
+        }
+
+        .device-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 25px rgba(0, 0, 0, 0.3);
+            background-color: #0056b3;
+        }
+
+        .device-card a {
+            text-decoration: none;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 1.2rem;
+            display: block;
+            text-align: center;
+            padding: 0.5rem;
+            transition: color 0.2s ease;
+        }
+
+        .device-card a:hover {
+            color: #e0e0e0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #8a9ba8;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .view-map-btn {
+            background: linear-gradient(135deg, #0056b3, #003875);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid #0056b3;
+        }
+
+        .view-map-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 86, 179, 0.3);
+            background: linear-gradient(135deg, #003875, #0056b3);
+        }
+
+        /* New styles for Scanned Locations Section */
+        .locations-container {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            margin-top: 1rem;
+        }
+
+        .location-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.2s;
+        }
+
+        .location-item:last-child {
+            border-bottom: none;
+        }
+
+        .location-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .location-info {
+            flex: 1;
+        }
+
+        .location-serial {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: #002a5c;
+            margin-bottom: 0.3rem;
+        }
+
+        .location-school {
+            color: #666;
+            margin-bottom: 0.3rem;
+        }
+
+        .location-coords {
+            font-size: 0.9rem;
+            color: #888;
+            font-family: monospace;
+        }
+
+        .location-timestamp {
+            font-size: 0.8rem;
+            color: #999;
+            text-align: right;
+            min-width: 120px;
+        }
+
+        .loading-message {
+            text-align: center;
+            color: #666;
+            padding: 2rem;
+        }
+
+        .no-locations {
+            text-align: center;
+            color: #888;
+            padding: 2rem;
+        }
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            header h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .device-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .view-map-btn {
+                padding: 0.5rem 1rem;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <img src="{{ url_for('static', filename='Looma-2019.png') }}" alt="Looma Logo" class="header-logo">
+            <h1>Looma Dashboard</h1>
+        </div>
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </header>
+
+    <div class="container">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">{{ serials|length }}</div>
+                <div class="stat-label">Total Devices</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">{{ total_scans }}</div>
+                <div class="stat-label">Total Scans</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="devices-with-location">0</div>
+                <div class="stat-label">Devices with Location</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h2>Device Locations</h2>
+                <a href="{{ url_for('device_map') }}" class="view-map-btn">View Map</a>
+            </div>
+            <div id="locations-preview" style="color: #b0b0b0; font-style: italic;">Loading location data...</div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Recent Device Scans</h2>
+            </div>
+            <div class="device-grid" id="deviceGrid"></div>
+        </div>
+
+        <div class="section">
+            <h2>Scanned Looma Devices</h2>
+            {% if serials %}
+                <div class="device-grid">
+                    {% for serial in serials %}
+                        <div class="device-card">
+                            <a href="{{ url_for('device', serial=serial) }}">{{ serial }}</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <div class="empty-state">
+                    <h3>No devices scanned yet</h3>
+                    <p>Scan a device using the QR code to see it here.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        // Fetch and display location statistics
+        fetch('/api/stats')
+            .then(response => response.json())
+            .then(data => {
+                if (data.devices_with_location !== undefined) {
+                    document.getElementById('devices-with-location').textContent = data.devices_with_location;
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching stats:', error);
+            });
+
+        // Fetch and display location preview
+        fetch('/api/locations-preview')
+            .then(response => response.json())
+            .then(data => {
+                const locationsDiv = document.getElementById('locations-preview');
+                if (data.locations && data.locations.length > 0) {
+                    const locationsList = data.locations.slice(0, 3).map(loc => 
+                        `${loc.serial} (${loc.school})`
+                    ).join(', ');
+                    locationsDiv.innerHTML = `Recent locations: ${locationsList}${data.locations.length > 3 ? '...' : ''}`;
+                } else {
+                    locationsDiv.innerHTML = 'No devices with location data yet.';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching locations:', error);
+                document.getElementById('locations-preview').innerHTML = 'Error loading location data.';
+            });
+
+        // Fetch and display scanned locations
+        fetch('/api/scanned-locations')
+            .then(response => response.json())
+            .then(data => {
+                const scannedLocationsDiv = document.getElementById('scanned-locations');
+                if (data.locations && data.locations.length > 0) {
+                    scannedLocationsDiv.innerHTML = ''; // Clear loading message
+                    data.locations.forEach(loc => {
+                        const locationItem = document.createElement('div');
+                        locationItem.classList.add('location-item');
+                        locationItem.innerHTML = `
+                            <div class="location-info">
+                                <div class="location-serial">${loc.serial}</div>
+                                <div class="location-school">${loc.school || 'N/A'}</div>
+                                <div class="location-coords">${loc.latitude}, ${loc.longitude}</div>
+                            </div>
+                            <div class="location-timestamp">${new Date(loc.timestamp).toLocaleString()}</div>
+                        `;
+                        scannedLocationsDiv.appendChild(locationItem);
+                    });
+                } else {
+                    scannedLocationsDiv.innerHTML = '<div class="no-locations">No scanned locations found.</div>';
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching scanned locations:', error);
+                document.getElementById('scanned-locations').innerHTML = '<div class="no-locations">Error loading scanned locations.</div>';
+            });
+    </script>
+</body>
+</html>

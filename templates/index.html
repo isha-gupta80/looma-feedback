@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Looma Device Scan</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .success-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 1000;
+            text-align: center;
+            min-width: 300px;
+        }
+        
+        .success-popup h3 {
+            margin: 0 0 1rem 0;
+            font-size: 1.5rem;
+        }
+        
+        .success-popup p {
+            margin: 0 0 1.5rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .success-popup button {
+            background: white;
+            color: #4CAF50;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        
+        .location-status {
+            margin: 1rem 0;
+            padding: 0.8rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        .location-granted {
+            background: #e8f5e8;
+            color: #2e7d32;
+            border: 1px solid #4caf50;
+        }
+        
+        .location-denied {
+            background: #ffebee;
+            color: #c62828;
+            border: 1px solid #f44336;
+        }
+        
+        .location-pending {
+            background: #fff3e0;
+            color: #ef6c00;
+            border: 1px solid #ff9800;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="success-popup" id="successPopup">
+        <h3>✓ Success!</h3>
+        <p>Device scan submitted successfully!</p>
+        <button onclick="closeSuccessPopup()">Continue</button>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='Looma-2019.png') }}" alt="Looma Logo" class="logo">
+            <h2>Looma Device Scan Form</h2>
+            {% if serial %}
+                <div class="device-info">
+                    <p><strong>Device Serial:</strong> {{ serial }}</p>
+                    {% if build_date %}<p><strong>Build Date:</strong> {{ build_date }}</p>{% endif %}
+                    {% if mfg_location %}<p><strong>Manufacturing Location:</strong> {{ mfg_location }}</p>{% endif %}
+                    {% if lot_number %}<p><strong>Lot Number:</strong> {{ lot_number }}</p>{% endif %}
+                </div>
+            {% endif %}
+        </div>
+
+        <div class="location-status" id="locationStatus">
+            <span id="locationText">Requesting location permission...</span>
+        </div>
+
+        <form id="deviceForm" action="/" method="POST">
+            <!-- Hidden fields populated from QR code -->
+            <input type="hidden" name="serial" value="{{ serial }}">
+            <input type="hidden" name="build_date" value="{{ build_date }}">
+            <input type="hidden" name="mfg_location" value="{{ mfg_location }}">
+            <input type="hidden" name="lot_number" value="{{ lot_number }}">
+            <input type="hidden" id="latitude" name="latitude">
+            <input type="hidden" id="longitude" name="longitude">
+
+            <label>School Name:
+                <input type="text" name="school" pattern="[A-Za-z\s]+" title="Only letters and spaces allowed" required>
+            </label>
+
+            <label>Technician Name:
+                <input type="text" name="technician" pattern="[A-Za-z\s]+" title="Only letters and spaces allowed" required>
+            </label>
+
+            <label>Software Version:
+                <input type="text" name="software_version" required>
+            </label>
+
+            <label>Condition:
+                <select name="condition" required>
+                    <option value="">Select condition</option>
+                    <option value="Excellent">Excellent</option>
+                    <option value="Good">Good</option>
+                    <option value="Fair">Fair</option>
+                    <option value="Poor">Poor</option>
+                    <option value="Damaged">Damaged</option>
+                </select>
+            </label>
+
+            <button type="submit" id="submitBtn">Submit Scan</button>
+        </form>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
