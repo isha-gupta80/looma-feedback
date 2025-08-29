@@ -108,6 +108,24 @@
         <div class="location-status" id="locationStatus">
             <span id="locationText">Requesting location permission...</span>
         </div>
+        
+        <div id="manualLocationSection" style="display: none; margin: 1rem 0; padding: 1rem; background: #f5f5f5; border-radius: 8px;">
+            <h4 style="margin: 0 0 0.5rem 0; color: #333;">Manual Location Entry</h4>
+            <p style="margin: 0 0 1rem 0; font-size: 0.9rem; color: #666;">If automatic location detection isn't working, you can enter coordinates manually:</p>
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                <div>
+                    <label for="manualLat" style="display: block; font-size: 0.9rem; margin-bottom: 0.3rem;">Latitude:</label>
+                    <input type="number" id="manualLat" step="any" placeholder="e.g. 27.7172" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div>
+                    <label for="manualLng" style="display: block; font-size: 0.9rem; margin-bottom: 0.3rem;">Longitude:</label>
+                    <input type="number" id="manualLng" step="any" placeholder="e.g. 85.3240" style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 4px;">
+                </div>
+                <div style="align-self: end;">
+                    <button type="button" onclick="useManualLocation()" style="padding: 0.5rem 1rem; background: #0056b3; color: white; border: none; border-radius: 4px; cursor: pointer;">Use These Coordinates</button>
+                </div>
+            </div>
+        </div>
 
         <form id="deviceForm" action="/" method="POST">
             <!-- Hidden fields populated from QR code -->
