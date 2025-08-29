@@ -1,15 +1,7 @@
 
 let locationGranted = false;
-let locationRetryCount = 0;
-const MAX_RETRY_ATTEMPTS = 3;
 
 window.onload = function () {
-    // Check if we're on a secure context (required for location on mobile)
-    if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
-        showLocationError("Location requires HTTPS on mobile devices");
-        return;
-    }
-    
     requestLocationPermission();
 };
 
@@ -17,117 +9,41 @@ function requestLocationPermission() {
     const locationStatus = document.getElementById("locationStatus");
     const locationText = document.getElementById("locationText");
 
-    if (!("geolocation" in navigator)) {
+    if ("geolocation" in navigator) {
+        locationText.textContent = "Requesting location permission...";
+        locationStatus.className = "location-status location-pending";
+
+        navigator.geolocation.getCurrentPosition(
+            function (position) {
+                document.getElementById("latitude").value = position.coords.latitude;
+                document.getElementById("longitude").value = position.coords.longitude;
+                locationGranted = true;
+                
+                locationText.textContent = "✓ Location permission granted";
+                locationStatus.className = "location-status location-granted";
+            },
+            function (error) {
+                const errorMessages = {
+                    [error.PERMISSION_DENIED]: "Location permission denied by user",
+                    [error.POSITION_UNAVAILABLE]: "Location information unavailable", 
+                    [error.TIMEOUT]: "Location request timed out"
+                };
+                
+                const errorMessage = errorMessages[error.code] || "Location access denied";
+                locationText.textContent = "⚠ " + errorMessage;
+                locationStatus.className = "location-status location-denied";
+                console.warn("Location error:", errorMessage);
+            },
+            {
+                enableHighAccuracy: true,
+                timeout: 10000,
+                maximumAge: 300000
+            }
+        );
+    } else {
         locationText.textContent = "⚠ Geolocation not supported by this browser";
         locationStatus.className = "location-status location-denied";
-        return;
     }
-
-    // Check permissions API if available (mainly for mobile)
-    if ('permissions' in navigator) {
-        navigator.permissions.query({name: 'geolocation'}).then(function(result) {
-            if (result.state === 'granted') {
-                getLocationWithRetry();
-            } else if (result.state === 'prompt') {
-                showLocationPrompt();
-            } else {
-                showLocationDenied();
-            }
-        }).catch(function() {
-            // Fallback if permissions API fails
-            getLocationWithRetry();
-        });
-    } else {
-        getLocationWithRetry();
-    }
-}
-
-function showLocationPrompt() {
-    const locationText = document.getElementById("locationText");
-    const locationStatus = document.getElementById("locationStatus");
-    
-    locationText.innerHTML = "📍 Please allow location access when prompted<br><small>Required for device tracking</small>";
-    locationStatus.className = "location-status location-pending";
-    
-    getLocationWithRetry();
-}
-
-function getLocationWithRetry() {
-    const locationText = document.getElementById("locationText");
-    const locationStatus = document.getElementById("locationStatus");
-    
-    locationText.textContent = "Requesting location permission...";
-    locationStatus.className = "location-status location-pending";
-
-    const options = {
-        enableHighAccuracy: true,
-        timeout: 15000, // Increased timeout for mobile
-        maximumAge: 60000 // Reduced max age for fresher location
-    };
-
-    navigator.geolocation.getCurrentPosition(
-        function (position) {
-            document.getElementById("latitude").value = position.coords.latitude;
-            document.getElementById("longitude").value = position.coords.longitude;
-            locationGranted = true;
-            
-            locationText.textContent = "✓ Location permission granted";
-            locationStatus.className = "location-status location-granted";
-            locationRetryCount = 0;
-        },
-        function (error) {
-            handleLocationError(error);
-        },
-        options
-    );
-}
-
-function handleLocationError(error) {
-    const locationText = document.getElementById("locationText");
-    const locationStatus = document.getElementById("locationStatus");
-    
-    const errorMessages = {
-        [error.PERMISSION_DENIED]: "Location permission denied",
-        [error.POSITION_UNAVAILABLE]: "Location information unavailable", 
-        [error.TIMEOUT]: "Location request timed out"
-    };
-    
-    const errorMessage = errorMessages[error.code] || "Location access failed";
-    console.warn("Location error:", errorMessage);
-    
-    // Mobile-specific retry logic
-    if (error.code === error.TIMEOUT && locationRetryCount < MAX_RETRY_ATTEMPTS) {
-        locationRetryCount++;
-        locationText.innerHTML = `⏳ Retrying location request (${locationRetryCount}/${MAX_RETRY_ATTEMPTS})...<br><small>Please ensure GPS is enabled</small>`;
-        locationStatus.className = "location-status location-pending";
-        
-        setTimeout(() => {
-            getLocationWithRetry();
-        }, 2000);
-        return;
-    }
-    
-    if (error.code === error.PERMISSION_DENIED) {
-        showLocationDenied();
-    } else {
-        showLocationError(errorMessage);
-    }
-}
-
-function showLocationDenied() {
-    const locationText = document.getElementById("locationText");
-    const locationStatus = document.getElementById("locationStatus");
-    
-    locationText.innerHTML = `⚠ Location access denied<br><small>You can still submit the form without location</small><br><button onclick="requestLocationPermission()" style="margin-top: 8px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>`;
-    locationStatus.className = "location-status location-denied";
-}
-
-function showLocationError(message) {
-    const locationText = document.getElementById("locationText");
-    const locationStatus = document.getElementById("locationStatus");
-    
-    locationText.innerHTML = `⚠ ${message}<br><small>You can still submit the form without location</small><br><button onclick="requestLocationPermission()" style="margin-top: 8px; padding: 4px 8px; background: #007bff; color: white; border: none; border-radius: 4px; cursor: pointer;">Try Again</button>`;
-    locationStatus.className = "location-status location-denied";
 }
 
 document.getElementById("deviceForm").addEventListener("submit", function (event) {
