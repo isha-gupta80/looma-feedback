@@ -155,8 +155,26 @@
       }
     }
 
+    // Validate device coordinates and filter invalid ones
+    const validDevices = devices.filter(device => {
+      const lat = parseFloat(device.latitude);
+      const lng = parseFloat(device.longitude);
+      return !isNaN(lat) && !isNaN(lng) && lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180;
+    });
+
+    console.log(`Displaying ${validDevices.length} valid devices out of ${devices.length} total devices`);
+
+    // Auto-fit map bounds if devices exist
+    if (validDevices.length > 0) {
+      const group = new L.featureGroup();
+      validDevices.forEach(device => {
+        group.addLayer(L.marker([device.latitude, device.longitude]));
+      });
+      map.fitBounds(group.getBounds().pad(0.1));
+    }
+
     // Add markers for each device with address lookup
-    devices.forEach(async device => {
+    validDevices.forEach(async device => {
       const marker = L.marker([device.latitude, device.longitude]).addTo(map);
       
       // Initial popup content with coordinates
@@ -167,7 +185,7 @@
           <p style="margin: 5px 0;"><strong>Technician:</strong> ${device.technician}</p>
           <p style="margin: 5px 0;"><strong>Condition:</strong> ${device.condition}</p>
           <p style="margin: 5px 0;"><strong>Last Scan:</strong> ${new Date(device.timestamp).toLocaleDateString()}</p>
-          <p style="margin: 5px 0;"><strong>Coordinates:</strong> ${device.latitude.toFixed(4)}, ${device.longitude.toFixed(4)}</p>
+          <p style="margin: 5px 0;"><strong>Coordinates:</strong> ${device.latitude.toFixed(6)}, ${device.longitude.toFixed(6)}</p>
           <p style="margin: 5px 0; color: #666;"><strong>Address:</strong> Loading...</p>
         </div>
       `;
@@ -184,7 +202,7 @@
             <p style="margin: 5px 0;"><strong>Technician:</strong> ${device.technician}</p>
             <p style="margin: 5px 0;"><strong>Condition:</strong> ${device.condition}</p>
             <p style="margin: 5px 0;"><strong>Last Scan:</strong> ${new Date(device.timestamp).toLocaleDateString()}</p>
-            <p style="margin: 5px 0;"><strong>Coordinates:</strong> ${device.latitude.toFixed(4)}, ${device.longitude.toFixed(4)}</p>
+            <p style="margin: 5px 0;"><strong>Coordinates:</strong> ${device.latitude.toFixed(6)}, ${device.longitude.toFixed(6)}</p>
             <p style="margin: 5px 0; font-size: 0.9em;"><strong>Address:</strong> ${address}</p>
           </div>
         `;

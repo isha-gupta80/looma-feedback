@@ -171,16 +171,24 @@ def device_map():
         map_devices = []
         for device in devices:
             try:
-                map_devices.append({
-                    'serial': device['serial'],
-                    'school': device.get('school', 'Unknown School'),
-                    'latitude': float(device['latitude']),
-                    'longitude': float(device['longitude']),
-                    'technician': device.get('technician', 'Unknown'),
-                    'condition': device.get('condition', 'Unknown'),
-                    'timestamp': device.get('timestamp', 'Unknown')
-                })
-            except (ValueError, TypeError):
+                lat = float(device['latitude'])
+                lng = float(device['longitude'])
+                
+                # Validate coordinate ranges
+                if -90 <= lat <= 90 and -180 <= lng <= 180:
+                    map_devices.append({
+                        'serial': device['serial'],
+                        'school': device.get('school', 'Unknown School'),
+                        'latitude': round(lat, 8),  # Higher precision for storage
+                        'longitude': round(lng, 8),
+                        'technician': device.get('technician', 'Unknown'),
+                        'condition': device.get('condition', 'Unknown'),
+                        'timestamp': device.get('timestamp', 'Unknown')
+                    })
+                else:
+                    logger.warning(f"Invalid coordinates for device {device['serial']}: lat={lat}, lng={lng}")
+            except (ValueError, TypeError) as e:
+                logger.warning(f"Invalid coordinate data for device {device.get('serial', 'Unknown')}: {e}")
                 continue
         
         return render_template('map.html', devices=map_devices)

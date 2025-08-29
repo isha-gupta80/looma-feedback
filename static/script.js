@@ -15,12 +15,24 @@ function requestLocationPermission() {
 
         navigator.geolocation.getCurrentPosition(
             function (position) {
-                document.getElementById("latitude").value = position.coords.latitude;
-                document.getElementById("longitude").value = position.coords.longitude;
-                locationGranted = true;
+                const lat = parseFloat(position.coords.latitude.toFixed(8));
+                const lng = parseFloat(position.coords.longitude.toFixed(8));
                 
-                locationText.textContent = "✓ Location permission granted";
-                locationStatus.className = "location-status location-granted";
+                // Validate coordinates before setting
+                if (lat >= -90 && lat <= 90 && lng >= -180 && lng <= 180) {
+                    document.getElementById("latitude").value = lat;
+                    document.getElementById("longitude").value = lng;
+                    locationGranted = true;
+                    
+                    locationText.textContent = `✓ Location permission granted (±${position.coords.accuracy}m)`;
+                    locationStatus.className = "location-status location-granted";
+                    
+                    console.log(`Location acquired: ${lat}, ${lng} (accuracy: ±${position.coords.accuracy}m)`);
+                } else {
+                    locationText.textContent = "⚠ Invalid coordinates received";
+                    locationStatus.className = "location-status location-denied";
+                    console.warn(`Invalid coordinates: lat=${lat}, lng=${lng}`);
+                }
             },
             function (error) {
                 const errorMessages = {
@@ -36,8 +48,8 @@ function requestLocationPermission() {
             },
             {
                 enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 300000
+                timeout: 15000,
+                maximumAge: 60000
             }
         );
     } else {
