@@ -162,6 +162,7 @@ def device_map():
             "latitude": {"$ne": None, "$ne": ""},
             "longitude": {"$ne": None, "$ne": ""},
             "serial": {"$ne": None, "$ne": ""}
+            
         }, {
             "serial": 1, "school": 1, "latitude": 1, "longitude": 1,
             "technician": 1, "condition": 1, "timestamp": 1
