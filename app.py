@@ -2,7 +2,7 @@
 import os
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from dotenv import load_dotenv
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import pymongo
 from pymongo import MongoClient
 import logging
@@ -57,6 +57,14 @@ def login_required(f):
             return redirect(url_for('login'))
         return f(*args, **kwargs)
     return decorated_function
+
+@app.template_filter("localtime")
+def localtime_filter(dt):
+    if dt is None:
+        return None
+    if dt.tzinfo is None:
+        dt = dt.replace(tzinfo=timezone.utc)
+    return dt.astimezone()
 
 @app.route("/", methods=['GET', 'POST'])
 def index():
@@ -126,7 +134,7 @@ def dashboard():
                 "total_scans": {"$sum": 1}
             }}
         ]
-        
+
         result = list(scans_collection.aggregate(pipeline))
         if result:
             serials = sorted([s for s in result[0]["unique_serials"] if s])
@@ -162,35 +170,26 @@ def device_map():
             "latitude": {"$ne": None, "$ne": ""},
             "longitude": {"$ne": None, "$ne": ""},
             "serial": {"$ne": None, "$ne": ""}
-            
         }, {
             "serial": 1, "school": 1, "latitude": 1, "longitude": 1,
             "technician": 1, "condition": 1, "timestamp": 1
         }))
-        
+
         map_devices = []
         for device in devices:
             try:
-                lat = float(device['latitude'])
-                lng = float(device['longitude'])
-                
-                # Validate coordinate ranges
-                if -90 <= lat <= 90 and -180 <= lng <= 180:
-                    map_devices.append({
-                        'serial': device['serial'],
-                        'school': device.get('school', 'Unknown School'),
-                        'latitude': round(lat, 8),  # Higher precision for storage
-                        'longitude': round(lng, 8),
-                        'technician': device.get('technician', 'Unknown'),
-                        'condition': device.get('condition', 'Unknown'),
-                        'timestamp': device.get('timestamp', 'Unknown')
-                    })
-                else:
-                    logger.warning(f"Invalid coordinates for device {device['serial']}: lat={lat}, lng={lng}")
-            except (ValueError, TypeError) as e:
-                logger.warning(f"Invalid coordinate data for device {device.get('serial', 'Unknown')}: {e}")
+                map_devices.append({
+                    'serial': device['serial'],
+                    'school': device.get('school', 'Unknown School'),
+                    'latitude': float(device['latitude']),
+                    'longitude': float(device['longitude']),
+                    'technician': device.get('technician', 'Unknown'),
+                    'condition': device.get('condition', 'Unknown'),
+                    'timestamp': device.get('timestamp', 'Unknown')
+                })
+            except (ValueError, TypeError):
                 continue
-        
+
         return render_template('map.html', devices=map_devices)
     except Exception as e:
         logger.error(f"Map error: {e}")
@@ -202,7 +201,7 @@ def device_map():
 def api_stats():
     try:
         thirty_days_ago = datetime.now() - timedelta(days=30)
-        
+
         # Single aggregation pipeline for all stats
         pipeline = [
             {
@@ -223,9 +222,9 @@ def api_stats():
                 }
             }
         ]
-        
+
         result = list(scans_collection.aggregate(pipeline))[0]
-        
+
         return jsonify({
             "total_devices": result["total_devices"][0]["count"] if result["total_devices"] else 0,
             "total_scans": result["total_scans"][0]["count"] if result["total_scans"] else 0,
@@ -247,14 +246,14 @@ def api_locations_preview():
         }, {
             "serial": 1, "school": 1, "latitude": 1, "longitude": 1
         }).sort("timestamp", -1).limit(5))
-        
+
         location_data = [{
             'serial': loc['serial'],
             'school': loc.get('school', 'Unknown School'),
             'latitude': loc['latitude'],
             'longitude': loc['longitude']
         } for loc in locations]
-        
+
         return jsonify({"locations": location_data})
     except Exception as e:
         logger.error(f"Locations preview error: {e}")

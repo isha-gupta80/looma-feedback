@@ -1,3 +1,15 @@
-
+For replit environment only
+admin login page link-->https://1bd55bdc-4074-425f-afd9-90c3979daaf9-00-1gbj5j3z7qfz4.worf.replit.dev/login
 username-skip
 passwaaord--password
+
+
+
+test links of looma devices:
+
+
+https://1bd55bdc-4074-425f-afd9-90c3979daaf9-00-1gbj5j3z7qfz4.worf.replit.dev/?serial=LM006&date=2024-01-15&location=Nepal&lot=LOT123
+https://1bd55bdc-4074-425f-afd9-90c3979daaf9-00-1gbj5j3z7qfz4.worf.replit.dev/?serial=LM007&date=2024-01-15&location=Nepal&lot=LOT123
+https://1bd55bdc-4074-425f-afd9-90c3979daaf9-00-1gbj5j3z7qfz4.worf.replit.dev/?serial=LM008&date=2024-01-15&location=Nepal&lot=LOT123
+https://1bd55bdc-4074-425f-afd9-90c3979daaf9-00-1gbj5j3z7qfz4.worf.replit.dev/?serial=LM009&date=2024-01-15&location=Nepal&lot=LOT123
+

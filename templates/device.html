@@ -197,7 +197,7 @@
                     {% for record in records %}
                     <div class="record-card">
                         <div class="record-header">
-                            <div class="record-date">{{ record.timestamp.strftime('%B %d, %Y at %I:%M %p') if record.timestamp else 'Unknown Date' }}</div>
+                            <div class="record-date">{{ (record.timestamp|localtime).strftime('%B %d, %Y at %I:%M %p') if record.timestamp else 'Unknown Date' }}</div>
                         </div>
                         <div class="record-details">
                             <div class="detail-item">
@@ -263,7 +263,7 @@
             try {
                 const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1`);
                 const data = await response.json();
-                
+
                 const element = document.getElementById(elementId);
                 if (data && data.display_name) {
                     element.textContent = data.display_name;
