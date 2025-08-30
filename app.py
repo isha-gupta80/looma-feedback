@@ -40,27 +40,14 @@ USERNAME = os.getenv("ADMIN_USERNAME", "admin")
 PASSWORD_HASH = os.getenv("ADMIN_PASSWORD_HASH")
 
 def get_scan_timestamp(request):
-    """Get accurate timestamp from client device or fallback to server time"""
+    """Get accurate timestamp from client or fallback to server time"""
     client_timestamp = request.form.get('client_timestamp')
     if client_timestamp:
         try:
-            # Handle various ISO timestamp formats
-            if client_timestamp.endswith('Z'):
-                timestamp = datetime.fromisoformat(client_timestamp.replace('Z', '+00:00'))
-            elif '+' in client_timestamp or client_timestamp.count('-') > 2:
-                timestamp = datetime.fromisoformat(client_timestamp)
-            else:
-                # Assume UTC if no timezone info
-                timestamp = datetime.fromisoformat(client_timestamp).replace(tzinfo=timezone.utc)
-            
-            logger.info(f"Using client device timestamp: {timestamp}")
-            return timestamp
-        except (ValueError, AttributeError) as e:
-            logger.warning(f"Invalid client timestamp format '{client_timestamp}': {e}, using server time")
-    
-    server_time = datetime.now(timezone.utc)
-    logger.info(f"Using server timestamp: {server_time}")
-    return server_time
+            return datetime.fromisoformat(client_timestamp.replace('Z', '+00:00'))
+        except (ValueError, AttributeError):
+            logger.warning("Invalid client timestamp format, using server time")
+    return datetime.now()
 
 def login_required(f):
     @wraps(f)
