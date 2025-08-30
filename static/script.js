@@ -1,4 +1,3 @@
-
 let locationGranted = false;
 
 window.onload = function () {
@@ -18,17 +17,17 @@ function requestLocationPermission() {
                 document.getElementById("latitude").value = position.coords.latitude;
                 document.getElementById("longitude").value = position.coords.longitude;
                 locationGranted = true;
-                
+
                 locationText.textContent = "✓ Location permission granted";
                 locationStatus.className = "location-status location-granted";
             },
             function (error) {
                 const errorMessages = {
                     [error.PERMISSION_DENIED]: "Location permission denied by user",
-                    [error.POSITION_UNAVAILABLE]: "Location information unavailable", 
+                    [error.POSITION_UNAVAILABLE]: "Location information unavailable",
                     [error.TIMEOUT]: "Location request timed out"
                 };
-                
+
                 const errorMessage = errorMessages[error.code] || "Location access denied";
                 locationText.textContent = "⚠ " + errorMessage;
                 locationStatus.className = "location-status location-denied";
@@ -48,44 +47,28 @@ function requestLocationPermission() {
 
 document.getElementById("deviceForm").addEventListener("submit", function (event) {
     event.preventDefault();
-    
-    // Validate form inputs
-    const namePattern = /^[A-Za-z\s]+$/;
-    const fields = {
-        school: this.school.value.trim(),
-        technician: this.technician.value.trim(),
-        software_version: this.software_version.value.trim(),
-        condition: this.condition.value
-    };
 
-    if (!namePattern.test(fields.school)) {
-        alert("School name should contain only letters and spaces.");
-        return;
+    if (!locationGranted) {
+        if (confirm("Location permission not granted. Submit without location data?")) {
+            submitForm();
+        }
+    } else {
+        submitForm();
     }
-    if (!namePattern.test(fields.technician)) {
-        alert("Technician name should contain only letters and spaces.");
-        return;
-    }
-    if (!fields.software_version) {
-        alert("Software version is required.");
-        return;
-    }
-    if (!fields.condition) {
-        alert("Please select a condition.");
-        return;
-    }
+});
 
-    // Disable submit button and show loading
+function submitForm() {
+    const form = document.getElementById("deviceForm");
+    const formData = new FormData(form);
     const submitBtn = document.getElementById("submitBtn");
-    const originalText = submitBtn.textContent;
+
+    // Add accurate client timestamp in ISO format
+    const clientTimestamp = new Date().toISOString();
+    formData.append('client_timestamp', clientTimestamp);
+
     submitBtn.disabled = true;
     submitBtn.textContent = "Submitting...";
 
-    // Prepare form data with client timestamp
-    const formData = new FormData(this);
-    formData.append('client_timestamp', new Date().toISOString());
-
-    // Submit form via AJAX
     fetch("/", {
         method: "POST",
         body: formData
@@ -93,28 +76,22 @@ document.getElementById("deviceForm").addEventListener("submit", function (event
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showSuccessPopup();
-            // Reset form while preserving hidden fields
-            this.reset();
-            const hiddenFields = ['serial', 'build_date', 'mfg_location', 'lot_number'];
-            hiddenFields.forEach(field => {
-                if (formData.get(field)) {
-                    this[field].value = formData.get(field);
-                }
-            });
+            alert(data.message);
+            form.reset();
+            document.getElementById("latitude").value = "";
+            document.getElementById("longitude").value = "";
         } else {
             alert("Error: " + data.message);
         }
     })
     .catch(error => {
-        console.error("Error:", error);
-        alert("An error occurred while submitting the form. Please try again.");
+        alert("An error occurred: " + error.message);
     })
     .finally(() => {
         submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
+        submitBtn.textContent = "Submit Scan";
     });
-});
+}
 
 function showSuccessPopup() {
     document.getElementById("overlay").style.display = "block";
