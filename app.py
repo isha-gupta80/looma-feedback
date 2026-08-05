@@ -7,6 +7,7 @@ import pymongo
 from pymongo import MongoClient
 import logging
 from werkzeug.security import check_password_hash
+from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import wraps
 
 # Load environment variables
@@ -18,6 +19,8 @@ logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.secret_key = os.getenv("SECRET_KEY", os.urandom(24))
+
+app.wsgi_app = ProxyFix(app.wsgi_app, x_prefix=1) # type: ignore
 
 # MongoDB connection
 MONGODB_URI = os.getenv("MONGODB_URI")
