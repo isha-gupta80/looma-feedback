@@ -86,7 +86,7 @@ document.getElementById("deviceForm").addEventListener("submit", function (event
     formData.append('client_timestamp', new Date().toISOString());
 
     // Submit form via AJAX
-    fetch("/", {
+    fetch("", {
         method: "POST",
         body: formData
     })
