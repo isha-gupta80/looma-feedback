@@ -11,6 +11,9 @@ from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import wraps
 
+# Load environment variables
+load_dotenv()
+
 FASTAPI_BASE_URL = os.getenv("DASHBOARD_API_URL", "http://localhost:8000")
 
 def get_registered_school_name(serial):
@@ -31,8 +34,6 @@ def get_registered_school_name(serial):
     except Exception as e:
         logger.warning(f"Could not verify school by serial {serial}: {e}")
     return None
-# Load environment variables
-load_dotenv()
 
 # Logging setup
 logging.basicConfig(level=logging.INFO)
