@@ -132,7 +132,7 @@ def index():
             return jsonify({"success": False, "message": "An error occurred while submitting the form."})
 
     return render_template('index.html', serial=serial or '', build_date=build_date, 
-                         mfg_location=mfg_location, lot_number=lot_number)
+                         mfg_location=mfg_location, lot_number=lot_number, fastapi_url=FASTAPI_BASE_URL)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():

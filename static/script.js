@@ -129,7 +129,9 @@ let allSchools = [];
 
 async function loadSchools() {
   try {
-    const res = await fetch("http://localhost:8000/schools");
+    const apiBaseUrl = "{{ fastapi_url }}";
+
+    const res = await fetch(`${{apiBaseUrl}/schools}`);
     const data = await res.json();
     allSchools = (data.schools || []).map((s) => s.name);
   } catch (err) {
