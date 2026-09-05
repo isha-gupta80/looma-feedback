@@ -118,9 +118,12 @@
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
 
-            <label>School Name:
-                <input type="text" name="school" pattern="[A-Za-z\s]+" title="Only letters and spaces allowed" required>
-            </label>
+           <label>School Name:
+    <div class="autocomplete-wrapper">
+        <input type="text" name="school" id="schoolInput" autocomplete="off" required>
+        <div id="schoolSuggestions" class="suggestions-box"></div>
+    </div>
+</label>
 
             <label>Technician Name:
                 <input type="text" name="technician" pattern="[A-Za-z\s]+" title="Only letters and spaces allowed" required>
@@ -146,5 +149,6 @@
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
 </body>
 </html>

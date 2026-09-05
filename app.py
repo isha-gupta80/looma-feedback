@@ -1,5 +1,6 @@
 
 import os
+import requests
 from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify
 from dotenv import load_dotenv
 from datetime import datetime, timedelta, timezone
@@ -10,6 +11,26 @@ from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import wraps
 
+FASTAPI_BASE_URL = os.getenv("DASHBOARD_API_URL", "http://localhost:8000")
+
+def get_registered_school_name(serial):
+    """Look up the school registered to this device serial in the dashboard's
+    schools database. Returns the exact registered name if found, else None.
+    """
+    if not serial:
+        return None
+    try:
+        resp = requests.get(f"{FASTAPI_BASE_URL}/schools", timeout=5)
+        resp.raise_for_status()
+        schools = resp.json().get("schools", [])
+        for school in schools:
+            looma = school.get("looma") or {}
+            school_serial = (looma.get("serialNumber") or "").strip().lower()
+            if school_serial and school_serial == serial.strip().lower():
+                return school.get("name")
+    except Exception as e:
+        logger.warning(f"Could not verify school by serial {serial}: {e}")
+    return None
 # Load environment variables
 load_dotenv()
 
@@ -79,10 +100,16 @@ def index():
 
     if request.method == 'POST':
         try:
+            typed_school = request.form['school'].strip()
+            registered_name = get_registered_school_name(serial)
+            final_school = registered_name or typed_school
+
+            if registered_name and registered_name != typed_school:
+                logger.info(f"Corrected school name for serial {serial}: '{typed_school}' -> '{registered_name}'")
             form_data = {
                 'serial': serial,
                 'technician': request.form['technician'].strip(),
-                'school': request.form['school'].strip(),
+                'school': final_school,
                 'software_version': request.form['software_version'].strip(),
                 'condition': request.form['condition'].strip(),
                 'latitude': request.form.get('latitude', '').strip(),
@@ -264,4 +291,4 @@ def api_locations_preview():
 
 if __name__ == '__main__':
     logger.info("Starting Flask application...")
-    app.run(debug=False, host="0.0.0.0", port=5000)
+    app.run(debug=False, host="0.0.0.0", port=5001)

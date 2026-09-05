@@ -125,3 +125,63 @@ function closeSuccessPopup() {
     document.getElementById("overlay").style.display = "none";
     document.getElementById("successPopup").style.display = "none";
 }
+let allSchools = [];
+
+async function loadSchools() {
+  try {
+    const res = await fetch("http://localhost:8000/schools");
+    const data = await res.json();
+    allSchools = (data.schools || []).map((s) => s.name);
+  } catch (err) {
+    console.error("Failed to load schools:", err);
+  }
+}
+
+function setupAutocomplete() {
+  const input = document.getElementById("schoolInput");
+  const box = document.getElementById("schoolSuggestions");
+
+  input.addEventListener("input", () => {
+    const query = input.value.trim().toLowerCase();
+    box.innerHTML = "";
+
+    if (!query) {
+      box.style.display = "none";
+      return;
+    }
+
+    const matches = allSchools.filter((name) =>
+      name.toLowerCase().includes(query)
+    );
+
+    if (matches.length === 0) {
+      box.style.display = "none";
+      return;
+    }
+
+    matches.slice(0, 8).forEach((name) => {
+      const item = document.createElement("div");
+      item.className = "suggestion-item";
+      item.textContent = name;
+      item.addEventListener("click", () => {
+        input.value = name;
+        box.style.display = "none";
+      });
+      box.appendChild(item);
+    });
+
+    box.style.display = "block";
+  });
+
+  // Hide suggestions when clicking outside
+  document.addEventListener("click", (e) => {
+    if (!input.contains(e.target) && !box.contains(e.target)) {
+      box.style.display = "none";
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  loadSchools();
+  setupAutocomplete();
+});

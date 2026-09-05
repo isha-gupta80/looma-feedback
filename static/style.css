@@ -332,3 +332,41 @@ button:active {
         font-size: 1rem;
     }
 }
+.autocomplete-wrapper {
+    position: relative;
+}
+
+.suggestions-box {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.suggestion-item {
+    padding: 0.6rem 0.8rem;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.suggestion-item:hover,
+.suggestion-item.active {
+    background-color: #f0f0f0;
+}
+select[name="condition"] {
+    padding: 0.7rem 0.9rem;
+    font-size: 1.05rem;
+    overflow-y: auto;
+    border-radius: 8px 8px 8px 8px;
+    min-height: 44px;
+     box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
