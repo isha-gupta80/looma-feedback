@@ -10,9 +10,11 @@ import logging
 from werkzeug.security import check_password_hash
 from werkzeug.middleware.proxy_fix import ProxyFix
 from functools import wraps
+from pathlib import Path
 
 # Load environment variables
-load_dotenv()
+BASE_DIR = Path(__file__).resolve().parent
+load_dotenv(dotenv_path=BASE_DIR / ".env", override=True)
 
 FASTAPI_BASE_URL = os.getenv("DASHBOARD_API_URL", "http://localhost:8000")
 
